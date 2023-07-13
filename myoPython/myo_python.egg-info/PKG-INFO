@@ -1,0 +1,26 @@
+Metadata-Version: 2.1
+Name: myo-python
+Version: 1.0.5
+Summary: Python bindings for the Thalmic Labs Myo SDK.
+Home-page: https://github.com/NiklasRosenstein/myo-python
+Author: Niklas Rosenstein
+Author-email: rosensteinniklas@gmail.com
+License: MIT
+Platform: UNKNOWN
+Requires-Python: >=3.5.0,<4.0.0
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
+Work in progress
+
+## Myo Predictor
+
+Using the api myo-python (add link later) to train a recurrent neural network to predict hand gestures
+
+Steps to accomplish my goal:
+- [ ] Study courses on kaggle (intermediate machine learning and time series)
+- [ ] Read the book Hands on ML[...] by Aurélien Géron
+- [ ] Test examples of RNNs, CNNs and LSTMs
+- [ ] Findout what are timesteps and how to use them as NNs inputs
+
+
