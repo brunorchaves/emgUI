@@ -2,8 +2,17 @@ import customtkinter as ctk
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-gestureSelected = "none"
+from PIL import Image, ImageTk
 
+gestureSelected = "none"
+gesture_images = {
+    "Pointer": "D:\Documentos\GitHub\emgUI\customTkinter\imgs\pointer.png",
+    "Rock": "D:\Documentos\GitHub\emgUI\customTkinter\imgs\imgrock.png",
+    "Open": "D:\Documentos\GitHub\emgUI\customTkinter\imgs\open.png",
+    "Spock": "D:\Documentos\GitHub\emgUI\customTkinter\imgs\spock.png",
+    "Thumbs Up": "D:\Documentos\GitHub\emgUI\customTkinter\imgs\imgthumbsup.png",
+    # Add more gestures and their corresponding image paths
+}
 
 
 class ctkApp:
@@ -37,6 +46,14 @@ class ctkApp:
         self.label3 = ctk.CTkLabel(master=self.root, text="Gesture selected: "+gestureSelected, font=('Roboto', 12))
         self.label3.place(relx=0.2,rely=0.15)
         # self.label.pack(pady=12, padx= 10)
+        self.image_label = ctk.CTkLabel(master=self.root)
+        self.image_label.place(relx=0.2, rely=0.25)
+        # image_path = gesture_images.get("Pointer")
+        # image = Image.open(image_path)
+        # photo = ImageTk.PhotoImage(image)
+        # self.image_label.configure(image=photo)
+        # self.image_label.image = photo  # Keep a reference to avoid garbage collection
+   
 
         self.button1 = ctk.CTkButton(
                                 master=self.root,
@@ -81,7 +98,15 @@ class ctkApp:
     def writeGesureName(self, gestureLabel):
         gestureSelected = gestureLabel
         self.label3.configure(text="Gesture selected: " + gestureSelected)
-
+        # Load and display the image
+        image_path = gesture_images.get(gestureSelected)
+        if image_path:
+            image = Image.open(image_path)
+            photo = ImageTk.PhotoImage(image)
+            self.image_label.configure(image=photo)
+            self.image_label.image = photo  # Keep a reference to avoid garbage collection
+        else:
+            self.image_label.configure(image=None)
     def update_window(self):
         fig, ax = plt.subplots()
         fig.set_size_inches(5,3)
