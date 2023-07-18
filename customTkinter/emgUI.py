@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from customtkinter import CTkImage
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -86,6 +87,14 @@ class ctkApp:
                                height=25,
                                command=lambda: self.writeGesureName(self.button5.cget("text")))
         self.button5.place(relx=0.0,rely=0.65)
+
+        self.buttonRecord = ctk.CTkButton(master = self.root,
+                               text="Record Gesture Data",
+                               width=150,
+                               height=25,
+                               command= self.open_window)
+        self.buttonRecord.place(relx=0.2,rely=0.65)
+
         self.plot_emg_graph()
         # self.checkbox= ctk.CTkCheckBox(master= self.frame, text="Remember Me")
         # self.checkbox.pack(pady=12,padx= 10)
@@ -100,13 +109,28 @@ class ctkApp:
         self.label3.configure(text="Gesture selected: " + gestureSelected)
         # Load and display the image
         image_path = gesture_images.get(gestureSelected)
+        
         if image_path:
-            image = Image.open(image_path)
+            img = Image.open(image_path)
+            image = img.resize((200, 200), Image.ANTIALIAS)
             photo = ImageTk.PhotoImage(image)
             self.image_label.configure(image=photo)
             self.image_label.image = photo  # Keep a reference to avoid garbage collection
         else:
             self.image_label.configure(image=None)
+    def open_window(self):
+        # Create the window
+        window = ctk.CTk()
+        window.geometry("300x200")
+        window.title("New Window")
+        
+        # Content and layout of the window
+        label = ctk.CTkLabel(window, text="This is a new window", font=('Roboto', 12))
+        label.pack(padx=20, pady=20)
+        
+        # Close the window after 10 seconds
+        window.after(10000, window.destroy)
+
     def update_window(self):
         fig, ax = plt.subplots()
         fig.set_size_inches(5,3)
