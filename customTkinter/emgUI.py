@@ -7,6 +7,63 @@ from PIL import Image, ImageTk
 from tkinter import Tk, Label, Toplevel
 import time
 
+import multiprocessing
+from pyomyo import Myo, emg_mode
+
+
+
+
+# ------------ Myo Setup ---------------
+q = multiprocessing.Queue()
+
+def worker(q):
+	m = Myo(mode=emg_mode.PREPROCESSED)
+	m.connect()
+	
+	def add_to_queue(emg, movement):
+		q.put(emg)
+
+	m.add_emg_handler(add_to_queue)
+	
+	def print_battery(bat):
+		print("Battery level:", bat)
+
+	m.add_battery_handler(print_battery)
+
+	 # Orange logo and bar LEDs
+	m.set_leds([128, 0, 0], [128, 0, 0])
+	# Vibrate to know we connected okay
+	m.vibrate(1)
+	
+	"""worker function"""
+	while True:
+		m.run()
+	print("Worker Stopped")
+
+last_vals = None
+
+def process_emg(q):
+    p = multiprocessing.Process(target=worker, args=(q,))
+    p.start()
+
+    try:
+        while True:
+
+            # Get the EMG data and plot it
+            while not(q.empty()):
+                emg = list(q.get())
+                # plot(scr, [e / 500. for e in emg])
+                print(emg)
+
+    except KeyboardInterrupt:
+        print("Quitting")
+        p.terminate()
+        # pygame.quit()
+        quit()
+    
+
+
+
 class myGestures:
     def __init__(self, gestureSelected):
         self.gestureSelected = gestureSelected
@@ -135,7 +192,7 @@ class ctkApp:
             self.image_label.configure(image=None)
     def openWindow(self,gestureName):
         window = Toplevel(self.root)
-        window.geometry("300x200")
+        window.geometry("400x250")
         window.title("New Window")
 
         label = Label(window, text="This is a new window", font=('Roboto', 12))
@@ -147,32 +204,7 @@ class ctkApp:
 
         update_count(0)
         self.root.after(10000, window.destroy)
-
-    def update_window(self):
-        fig, ax = plt.subplots()
-        fig.set_size_inches(5,3)
-        global x,y,s,c
-        x,y,s,c = np.random.rand(4,int(100))
-        ax.scatter(x,y,s*5,c)
-        ax.axis("off")
-        fig.subplots_adjust(left=0, right=1, bottom=0, top=1, wspace=0, hspace=0)
-        canvas = FigureCanvasTkAgg(fig,master=self.root)
-        canvas.draw()
-        canvas.get_tk_widget().place(relx=0.33, rely=0.025)
-        self.root.update()
         
-    def update_surface(self,other):
-        fig, ax = plt.subplots()
-        fig.set_size_inches(11,5.3)
-        ax.scatter(x,y,s*5,c)
-        ax.axis("off")
-        fig.subplots_adjust(left=0, right=1, bottom=0, top=1, wspace=0, hspace=0)
-        canvas = FigureCanvasTkAgg(fig,master=self.root)
-        canvas.draw()
-        canvas.get_tk_widget().place(relx=0.33, rely=0.025)
-        self.root.update()
-
-
     def plot_emg_graph(self):
         
         # Generating sample data for 8 channels
@@ -220,7 +252,11 @@ class ctkApp:
 
 
 
-if __name__ == "__main__":        
+if __name__ == "__main__":  
+   # Create and start the process for EMG processing
+    p = multiprocessing.Process(target=process_emg, args=(q,))
+    p.start()      
     CTK_Window = ctkApp()
+    
     # Update the window
     # root.update()

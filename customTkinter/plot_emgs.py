@@ -7,10 +7,9 @@ Press Ctrl + C in the terminal to exit
 import pygame
 from pygame.locals import *
 import multiprocessing
+
 from pyomyo import Myo, emg_mode
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+
 # ------------ Myo Setup ---------------
 q = multiprocessing.Queue()
 
@@ -66,14 +65,14 @@ def plot(scr, vals):
 	last_vals = vals
 
 
-def initialPlot():
-   
 # -------- Main Program Loop -----------
 if __name__ == "__main__":
 	p = multiprocessing.Process(target=worker, args=(q,))
 	p.start()
-	emg=" "
-	initialPlot();
+
+	w, h = 800, 600
+	# scr = pygame.display.set_mode((w, h))
+
 	try:
 		while True:
 			# Handle pygame events to keep the window responding
