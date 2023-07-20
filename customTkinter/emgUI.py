@@ -9,8 +9,27 @@ import time
 
 import multiprocessing
 from pyomyo import Myo, emg_mode
+signalList_constructor = "[0, 0, 0, 0, 0, 0, 0, 0]"
 
+class myGestures:
+    def __init__(self, gestureSelected,signalList):
+        self.gestureSelected = gestureSelected
+        self.signal = signalList
+    # getter method
+    def get_gSelected(self):
+        return self.gestureSelected
+    # setter method
+    def set_gSelected(self, x):
+        self.gestureSelected = x
+    # setter method
+    def get_SignalList(self):
+        return self.signal
+    # setter method
+    def set_SignalList(self, y):
+        self.signal = y
 
+# Instance of gesture data
+gesturesData = myGestures("none",signalList_constructor)
 
 
 # ------------ Myo Setup ---------------
@@ -53,7 +72,9 @@ def process_emg(q):
             while not(q.empty()):
                 emg = list(q.get())
                 # plot(scr, [e / 500. for e in emg])
-                print(emg)
+                # print(emg)
+                gesturesData.set_SignalList(str(emg))
+                print(gesturesData.get_SignalList())
 
     except KeyboardInterrupt:
         print("Quitting")
@@ -64,19 +85,7 @@ def process_emg(q):
 
 
 
-class myGestures:
-    def __init__(self, gestureSelected):
-        self.gestureSelected = gestureSelected
-        # self.age = age
-    # getter method
-    def get_gSelected(self):
-        return self.gestureSelected
-    # setter method
-    def set_gSelected(self, x):
-        self.gestureSelected = x
 
-# Instance of gesture data
-gesturesData = myGestures("none")
 
 
 gestureSelected = "none"
@@ -170,6 +179,7 @@ class ctkApp:
         self.buttonRecord.place(relx=0.2,rely=0.65)
 
         self.plot_emg_graph()
+
         # self.checkbox= ctk.CTkCheckBox(master= self.frame, text="Remember Me")
         # self.checkbox.pack(pady=12,padx= 10)
         self.root.mainloop()
