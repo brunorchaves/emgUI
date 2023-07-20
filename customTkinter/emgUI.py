@@ -4,6 +4,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image, ImageTk
+from tkinter import Tk, Label, Toplevel
+import time
+
+class myGestures:
+    def __init__(self, gestureSelected):
+        self.gestureSelected = gestureSelected
+        # self.age = age
+    # getter method
+    def get_gSelected(self):
+        return self.gestureSelected
+    # setter method
+    def set_gSelected(self, x):
+        self.gestureSelected = x
+
+# Instance of gesture data
+gesturesData = myGestures("none")
+
 
 gestureSelected = "none"
 gesture_images = {
@@ -92,20 +109,18 @@ class ctkApp:
                                text="Record Gesture Data",
                                width=150,
                                height=25,
-                               command= self.open_window)
+                               command=lambda: self.openWindow(gestureSelected))
         self.buttonRecord.place(relx=0.2,rely=0.65)
 
         self.plot_emg_graph()
         # self.checkbox= ctk.CTkCheckBox(master= self.frame, text="Remember Me")
         # self.checkbox.pack(pady=12,padx= 10)
         self.root.mainloop()
-        
-    def login(self):
-            print("Test") 
 
     gestureLabel= " "      
     def writeGesureName(self, gestureLabel):
         gestureSelected = gestureLabel
+        gesturesData.set_gSelected(gestureLabel)
         self.label3.configure(text="Gesture selected: " + gestureSelected)
         # Load and display the image
         image_path = gesture_images.get(gestureSelected)
@@ -118,18 +133,20 @@ class ctkApp:
             self.image_label.image = photo  # Keep a reference to avoid garbage collection
         else:
             self.image_label.configure(image=None)
-    def open_window(self):
-        # Create the window
-        window = ctk.CTk()
+    def openWindow(self,gestureName):
+        window = Toplevel(self.root)
         window.geometry("300x200")
         window.title("New Window")
-        
-        # Content and layout of the window
-        label = ctk.CTkLabel(window, text="This is a new window", font=('Roboto', 12))
+
+        label = Label(window, text="This is a new window", font=('Roboto', 12))
         label.pack(padx=20, pady=20)
-        
-        # Close the window after 10 seconds
-        window.after(10000, window.destroy)
+        def update_count(seconds):
+            label.configure(text="Recording gesture:"+gesturesData.get_gSelected()+"  Seconds passed: " + str(seconds))
+            if seconds < 10:
+                window.after(1000, update_count, seconds + 1)
+
+        update_count(0)
+        self.root.after(10000, window.destroy)
 
     def update_window(self):
         fig, ax = plt.subplots()
