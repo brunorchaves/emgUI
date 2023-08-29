@@ -235,7 +235,7 @@ class ctkApp:
                         'Channel E', 'Channel F', 'Channel G', 'Channel H']
         # Define colors for each channel
         colors = ['blue', 'green', 'red', 'purple', 'orange', 'brown', 'pink', 'gray']
-
+        # *
 
         fig, axs = plt.subplots(num_channels, 1, figsize=(6, 4), sharex=True)
         # fig.set_size_inches(11,5.3)
